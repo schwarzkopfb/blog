@@ -13,9 +13,9 @@ The next logical step was to create some webscraper scripts to continously scan 
 Since then I have a lot of fun exploring this amazing piece of hardware and making music with it. I also started to build my DAWless setup.
 
 My primary goal here is to be able to go out for a night to play somewhere with only one backpack. (Speakers and stuff excluded of course.) I went through a lot of gears for controlling the op-z, like [Novation Launch Control XL](https://novationmusic.com/en/launch/launch-control-xl) and [MPK mini](https://www.akaipro.com/mpk-mini-mkii)  to unleash the potential of this genius little synth/sampler/sequencer. 
-
 <img src="./launch.png" />
-Then I just spotted [intech.studio](https://intech.studio/)'s brilliant grid controller in [this video](https://www.youtube.com/watch?v=S2LzUNaYzWY&t=1291s&ab_channel=SpaceTown). That was huge! 
+
+Then I just spotted [Intech Studio](https://intech.studio)'s brilliant grid controller in [this video](https://www.youtube.com/watch?v=S2LzUNaYzWY). That was huge! 
 It's a programmable tiny controller (that fits in your backpack easily!) and can be a perfect companion for op-z. I ordered my first grid unit almost immeadiately, spent a weekend on writing some lua code and that worked perfectly!
 <img src="./mapping.png" /><img src="./wired_together.png" />
 
