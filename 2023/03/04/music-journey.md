@@ -6,7 +6,7 @@ Then I started the uni and I also had to get a job to pay the cost of my studies
 
 After 6+ years spent like this, something really inspiring happened. I started working at [Prezi](https://prezi.com), a company which is famous about its culture. [Alex Szabo](https://www.linkedin.com/in/alxszabo/) organized the first Gadget Petting Zoo™ event inside Prezi. That was about bringing your own tools, wiring them together somehow and making sounds that can be identified as music. That was an open event inside the company and you were able to join even if you don't had musical equipment.
 
-[Tom Bean](https://www.linkedin.com/in/tkbean/) showed up with an [op-z](https://teenage.engineering/products/op-z). I knew a lot about that live act workhorse but didn't have a chance to try it out. I can truly say that this gadget is even more amazing when you can gat your hands on it. So I decided to get my own.
+[Tom Bean](https://www.linkedin.com/in/tkbean/) showed up with an [op-z](https://teenage.engineering/products/op-z). I knew a lot about that live act workhorse but didn't have a chance to try it out. I can truly say that this gadget is even more amazing when you can get your hands on it. So I decided to get my own.
 
 The next logical step was to create some webscraper scripts to continously scan used instrument marketplaces. And after a few weeks, I just got a notification about a great deal. The next day I bought my own op-z! And we had amazing [jamming sessions](https://soundcloud.com/django-untrained/zoom0010/s-5MPkHWbfaDL).
 
