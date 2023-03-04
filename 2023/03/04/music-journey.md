@@ -8,7 +8,7 @@ After 8+ years spent like this, something really inspiring happened. I started w
 
 [Tom Bean](https://www.linkedin.com/in/tkbean/) showed up with an [op-z](https://teenage.engineering/products/op-z). I knew a lot about that live act workhorse but didn't have a chance to try it out. I can truly say that this gadget is even more amazing when you can gat your hands on it. So I decided to get my own.
 
-The next logical step was to create some webscraper scripts to continously scan used instrument marketplaces. And after a few weeks, I just got a notification about a great deal. The next day I bought my own op-z!
+The next logical step was to create some webscraper scripts to continously scan used instrument marketplaces. And after a few weeks, I just got a notification about a great deal. The next day I bought my own op-z! And we had amazing [jamming sessions](https://soundcloud.com/django-untrained/zoom0010/s-5MPkHWbfaDL).
 
 Since then I have a lot of fun exploring this amazing piece of hardware and making music with it. I also started to build my DAWless setup.
 
