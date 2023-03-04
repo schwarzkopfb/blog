@@ -20,7 +20,7 @@ It's a programmable tiny controller (that fits in your backpack easily!) and can
 <img src="./mapping.png" /><img src="./wired_together.png" />
 
 Got motivated, so I started to get the full potential of the grid system. The guys at Intech just gave me some other units to experiment with so I ended up having The Perfect DAWless setup with op-z! Having a dedicated encoder for each param of the selected instrument, full control on the output level of each channel and many more handy utils. Wired together with a Kingston Nucleum and having an old iPad as a display (connected via Blouetotth LE) it's just perfect to play live.
-<img src="./planning.png" /><img src="./IMG_3911.png" />
+<img src="./planning.png" /><img src="./setup.png" />
 
 I'll share the source code with the Intech guys soon, so they'll be able to publish it officially as a Grid profile for OP-Z, so anyone interested will be able to download it.
 
