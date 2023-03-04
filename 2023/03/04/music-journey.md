@@ -1,6 +1,6 @@
 # My journey and current state of making music
 
-Once upon a time in high-school I attended to [Chris Palmer](https://open.spotify.com/artist/28VnidW62NnJOQAExf4HH6?si=HxFWu6pnR32gurroH0iscA)'s piano and "computer assisted music making" classes and earnt a certificate. I played a piano interpretation of Don't You Worry Child by Swedish House Mafia with beautyful vocals from my classmate Kitti at our graduation ceremony.
+Once upon a time in high-school I attended to [Chris Palmer](https://open.spotify.com/artist/28VnidW62NnJOQAExf4HH6?si=HxFWu6pnR32gurroH0iscA)'s piano and "computer assisted music making" classes and earnt a certificate. I played a piano interpretation of [Don't You Worry Child by Swedish House Mafia](https://www.youtube.com/watch?v=r1MN4pR5wXM) with beautiful vocals from my classmate Kitti at our graduation ceremony.
 
 Then I started the uni and I also had to get a job to pay the cost of my studies and living, so I didn't really have time and money to continue this hobby. I followed the news about electronic music production, broadened my musical repertoire and met with friends from time to time for some jamming However I did not put too much effort into this "music making thingy" (as I referred to it).
 
