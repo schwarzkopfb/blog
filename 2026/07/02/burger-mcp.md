@@ -15,7 +15,7 @@ _I was asking shopping questions._
 The conversation already contained everything needed to make good decisions. The only thing missing was access to the products in my grocery webshop.
 Since there isn’t an official integration, and current web browsing isn’t particularly good at exploring an entire webshop, I spent a few hours building a tiny MCP server with Codex that lets ChatGPT search products and inspect product pages whenever it needs more context.
 
-It worked surprisingly well.
+_It worked surprisingly well._
 
 No more screenshots. No more manually searching for products. Just continuing the conversation.
 
@@ -25,7 +25,7 @@ The MCP server itself isn’t the point.
 The interesting part is that I felt the need to build it.
 As AI assistants become part of more personal, long-running projects, they’ll increasingly become the place where purchasing decisions happen. People won’t want to leave the conversation, search a webshop, compare products, then come back.
 
-They’ll expect their assistant to do that with them.
+**They’ll expect their assistant to do that with them.**
 
 I open-sourced the project, but I’m not publishing it because I have no official association with Kifli.hu, and scraping someone else’s website isn’t the right solution anyway.
 The right solution is for retailers to expose these capabilities themselves.
