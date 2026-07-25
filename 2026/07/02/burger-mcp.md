@@ -37,7 +37,7 @@ The right solution is for retailers to expose these capabilities themselves.
 * Experimented with [Nub.js](https://nubjs.com), which I can highly recommend checking out.
 * Exposed my local MCP server to ChatGPT through Cloudflare Tunnels, which is still amazing to me considering it’s available for free for projects like this.
 
-[Repo](/mcpekaru) ⸱ 
+[Repo](https://github.com/schwarzkopfb/mcpekaru) ⸱ 
 [LinkedIn post](https://www.linkedin.com/posts/schwarzkopfb_a-tiny-birthday-side-project-and-a-product-ugcPost-7478500703251050497-mEAd)
 
 ![image](./hu_chat_sample_1.jpeg)
