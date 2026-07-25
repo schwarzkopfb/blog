@@ -28,7 +28,7 @@ They’ll expect their assistant to do that with them.
 I open-sourced the project, but I’m not publishing it because I have no official association with Kifli.hu, and scraping someone else’s website isn’t the right solution anyway.
 The right solution is for retailers to expose these capabilities themselves.
 
-_Sooner rather than later._
+**Sooner rather than later.**
 
 ### Technical notes
 
@@ -37,7 +37,7 @@ _Sooner rather than later._
 * Experimented with [Nub.js](https://nubjs.com), which I can highly recommend checking out.
 * Exposed my local MCP server to ChatGPT through Cloudflare Tunnels, which is still amazing to me considering it’s available for free for projects like this.
 
-[Repo](/mcpserver) ⸱ 
+[Repo](/mcpekaru) ⸱ 
 [LinkedIn post](https://www.linkedin.com/posts/schwarzkopfb_a-tiny-birthday-side-project-and-a-product-ugcPost-7478500703251050497-mEAd)
 
 ![image](./hu_chat_sample_1.jpeg)
