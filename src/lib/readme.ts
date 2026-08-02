@@ -1,6 +1,6 @@
 import type { Bio } from "./bio";
 import { BIO_END, BIO_START, POSTS_END, POSTS_START } from "./markers";
-import type { Post } from "./posts";
+import { groupPosts, type Post } from "./posts";
 
 export { BIO_END, BIO_START, POSTS_END, POSTS_START } from "./markers";
 
@@ -14,11 +14,15 @@ export function escapeMarkdownLinkLabel(title: string): string {
 }
 
 export function formatReadmePostList(posts: Post[]): string {
-  return posts
-    .map(
-      (post) =>
-        `- \`${post.date}\` [${escapeMarkdownLinkLabel(post.title)}](./${post.sourcePath})`,
-    )
+  return groupPosts(posts)
+    .map(({ canonical, variants }) => {
+      const variantLinks = variants.length === 0
+        ? ""
+        : ` \\[${variants
+          .map((variant) => `[${variant.variant!.toUpperCase()}](./${variant.sourcePath})`)
+          .join(", ")}\\]`;
+      return `- \`${canonical.date}\` [${escapeMarkdownLinkLabel(canonical.title)}](./${canonical.sourcePath})${variantLinks}`;
+    })
     .join("\n");
 }
 

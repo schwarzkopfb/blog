@@ -1,19 +1,25 @@
 ---
 import { getCollection, render, type CollectionEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { collectPosts, getPostNeighbors, type Post } from "../lib/posts";
+import { collectPosts, getPostNeighbors, groupPosts, type Post } from "../lib/posts";
 
 type Props = {
   post: Post;
   entry: CollectionEntry<"posts">;
   previous: Post | null;
   next: Post | null;
+  versions: Post[];
 };
 
 export async function getStaticPaths() {
   const [posts, entries] = await Promise.all([collectPosts(), getCollection("posts")]);
   const entriesById = new Map(entries.map((entry) => [entry.id, entry]));
   const postIds = new Set(posts.map((post) => post.id));
+  const postGroups = groupPosts(posts);
+  const canonicalPosts = postGroups.map((group) => group.canonical);
+  const groupsByCanonicalId = new Map(
+    postGroups.map((group) => [group.canonical.id, group]),
+  );
   const missingEntries = posts.filter((post) => !entriesById.has(post.id));
   const unexpectedEntries = entries.filter((entry) => !postIds.has(entry.id));
 
@@ -26,20 +32,42 @@ export async function getStaticPaths() {
   }
 
   return posts.map((post) => {
-    const { previous, next } = getPostNeighbors(posts, post.id);
+    const group = groupsByCanonicalId.get(post.canonicalId)!;
+    const { previous, next } = getPostNeighbors(canonicalPosts, post.canonicalId);
     return {
       params: { slug: post.id },
-      props: { post, entry: entriesById.get(post.id)!, previous, next },
+      props: {
+        post,
+        entry: entriesById.get(post.id)!,
+        previous,
+        next,
+        versions: [group.canonical, ...group.variants],
+      },
     };
   });
 }
 
-const { post, entry, previous, next } = Astro.props;
+const { post, entry, previous, next, versions } = Astro.props;
 const { Content } = await render(entry);
 ---
 
 <BaseLayout title={`${post.title} · schwarzkopfb/blog`} showAllPosts>
   <p class="post-path">{post.pathLabel}</p>
+  <h1 class:list={["post-heading", { "post-heading--with-variants": versions.length > 1 }]}>
+    {post.title}
+  </h1>
+  {versions.length > 1 && (
+    <nav class="post-variants" aria-label="Post versions">
+      {versions.map((version) => (
+        <a
+          href={version.route}
+          aria-current={version.id === post.id ? "page" : undefined}
+        >
+          {version.variant?.toUpperCase() ?? "EN"}
+        </a>
+      ))}
+    </nav>
+  )}
   <article>
     <Content />
   </article>
@@ -76,6 +104,41 @@ const { Content } = await render(entry);
 </BaseLayout>
 
 <style>
+  .post-heading--with-variants {
+    margin-bottom: 1.1rem;
+  }
+
+  .post-variants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0 0 2.4rem;
+    font: 500 0.72rem/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .post-variants a {
+    padding: 0.4rem 0.78rem;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 160ms ease, background-color 160ms ease;
+  }
+
+  .post-variants a:hover {
+    color: var(--text);
+  }
+
+  .post-variants a[aria-current="page"] {
+    color: var(--background);
+    background: var(--text);
+  }
+
+  article > :global(h1:first-child) {
+    display: none;
+  }
+
   .post-navigation {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

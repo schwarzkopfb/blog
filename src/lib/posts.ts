@@ -10,8 +10,16 @@ export type Post = {
   month: string;
   day: string;
   slug: string;
+  baseSlug: string;
+  variant: string | null;
+  canonicalId: string;
   title: string;
   pathLabel: string;
+};
+
+export type PostGroup = {
+  canonical: Post;
+  variants: Post[];
 };
 
 export type PostNeighbors = {
@@ -29,8 +37,8 @@ export class PostValidationError extends Error {
   }
 }
 
-const POST_PATH = /^(\d{4})\/(\d{2})\/(\d{2})\/([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/;
-const EXPECTED_PATH = "YYYY/MM/DD/lowercase-kebab-case.md";
+const POST_PATH = /^(\d{4})\/(\d{2})\/(\d{2})\/([a-z0-9]+(?:-[a-z0-9]+)*)(?:_([a-z0-9]+(?:-[a-z0-9]+)*))?\.md$/;
+const EXPECTED_PATH = "YYYY/MM/DD/lowercase-kebab-case[_variant].md";
 
 export function normalizeSourcePath(sourcePath: string): string {
   return sourcePath.replaceAll("\\", "/").replace(/^\.\//, "");
@@ -42,7 +50,8 @@ function pathError(sourcePath: string, detail?: string): PostValidationError {
     [
       `Invalid blog post path: ${normalized}`,
       "",
-      detail ?? "Post paths must use a real date and a lowercase kebab-case slug.",
+      detail ??
+        "Post paths must use a real date, a lowercase kebab-case slug, and at most one optional variant postfix.",
       "",
       `Expected: ${EXPECTED_PATH}`,
       `Received: ${normalized}`,
@@ -70,7 +79,9 @@ export function parsePostPath(sourcePath: string, title: string): Post {
   const year = match[1]!;
   const month = match[2]!;
   const day = match[3]!;
-  const slug = match[4]!;
+  const baseSlug = match[4]!;
+  const variant = match[5] ?? null;
+  const slug = variant ? `${baseSlug}_${variant}` : baseSlug;
   const numericMonth = Number(month);
   const numericDay = Number(day);
   const numericYear = Number(year);
@@ -92,6 +103,7 @@ export function parsePostPath(sourcePath: string, title: string): Post {
   }
 
   const id = normalized.slice(0, -3);
+  const canonicalId = `${year}/${month}/${day}/${baseSlug}`;
   return {
     sourcePath: normalized,
     id,
@@ -101,6 +113,9 @@ export function parsePostPath(sourcePath: string, title: string): Post {
     month,
     day,
     slug,
+    baseSlug,
+    variant,
+    canonicalId,
     title,
     pathLabel: `${year} / ${month} / ${day} / ${slug.toUpperCase()}`,
   };
@@ -137,6 +152,31 @@ export function sortPosts(posts: Post[]): Post[] {
     if (left.slug === right.slug) return 0;
     return left.slug < right.slug ? -1 : 1;
   });
+}
+
+export function groupPosts(posts: Post[]): PostGroup[] {
+  const sortedPosts = sortPosts(posts);
+  const canonicalPosts = sortedPosts.filter((post) => post.variant === null);
+  const canonicalIds = new Set(canonicalPosts.map((post) => post.id));
+  const orphanedVariants = sortedPosts.filter(
+    (post) => post.variant !== null && !canonicalIds.has(post.canonicalId),
+  );
+
+  if (orphanedVariants.length > 0) {
+    throw new PostValidationError(
+      orphanedVariants.map(
+        (post) =>
+          `Variant post ${post.sourcePath} requires canonical post ${post.canonicalId}.md.`,
+      ),
+    );
+  }
+
+  return canonicalPosts.map((canonical) => ({
+    canonical,
+    variants: sortedPosts
+      .filter((post) => post.canonicalId === canonical.id && post.variant !== null)
+      .sort((left, right) => left.variant!.localeCompare(right.variant!, "en")),
+  }));
 }
 
 export function getPostNeighbors(posts: Post[], currentId: string): PostNeighbors {
@@ -203,5 +243,7 @@ export async function collectPosts(root = process.cwd()): Promise<Post[]> {
     throw new PostValidationError(issues);
   }
 
-  return sortPosts(posts);
+  const sortedPosts = sortPosts(posts);
+  groupPosts(sortedPosts);
+  return sortedPosts;
 }

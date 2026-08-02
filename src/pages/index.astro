@@ -2,9 +2,10 @@
 import { Content as BioContent } from "../../BIO.md";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { readBio } from "../lib/bio";
-import { collectPosts } from "../lib/posts";
+import { collectPosts, groupPosts } from "../lib/posts";
 
 const [, posts] = await Promise.all([readBio(), collectPosts()]);
+const postGroups = groupPosts(posts);
 ---
 
 <BaseLayout title="schwarzkopfb/blog" home>
@@ -12,10 +13,24 @@ const [, posts] = await Promise.all([readBio(), collectPosts()]);
     <BioContent />
   </section>
   <ul class="post-index" aria-label="Posts">
-    {posts.map((post) => (
+    {postGroups.map(({ canonical, variants }) => (
       <li>
-        <time datetime={post.date}>{post.date}</time>
-        <a href={post.route}>{post.title}</a>
+        <time datetime={canonical.date}>{canonical.date}</time>
+        <span class="post-entry">
+          <a class="post-title" href={canonical.route}>{canonical.title}</a>
+          {variants.length > 0 && (
+            <span class="post-variants" aria-label="Available variants">
+              <span aria-hidden="true"> [</span>
+              {variants.map((variant, index) => (
+                <>
+                  {index > 0 && <span aria-hidden="true">, </span>}
+                  <a href={variant.route}>{variant.variant!.toUpperCase()}</a>
+                </>
+              ))}
+              <span aria-hidden="true">]</span>
+            </span>
+          )}
+        </span>
       </li>
     ))}
   </ul>
@@ -70,17 +85,31 @@ const [, posts] = await Promise.all([readBio(), collectPosts()]);
     letter-spacing: 0.025em;
   }
 
-  a {
+  .post-entry {
+    line-height: 1.45;
+  }
+
+  .post-entry a {
     color: var(--text);
     font-size: 1.06rem;
     font-weight: 520;
-    line-height: 1.45;
     text-decoration-color: var(--line);
   }
 
-  a:hover {
+  .post-entry a:hover {
     color: var(--accent);
     text-decoration-color: currentColor;
+  }
+
+  .post-variants {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .post-variants a {
+    color: var(--muted);
+    font: 600 0.72rem/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: 0.06em;
   }
 
   @media (max-width: 34rem) {

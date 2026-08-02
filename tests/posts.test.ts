@@ -7,6 +7,7 @@ import {
   collectPosts,
   extractPostTitle,
   getPostNeighbors,
+  groupPosts,
   parsePostPath,
   PostValidationError,
   sortPosts,
@@ -39,6 +40,9 @@ test("parses a valid post path and derives its route", () => {
     month: "08",
     day: "02",
     slug: "arc-raiders",
+    baseSlug: "arc-raiders",
+    variant: null,
+    canonicalId: "2026/08/02/arc-raiders",
     title: "ARC Raiders",
     pathLabel: "2026 / 08 / 02 / ARC-RAIDERS",
   });
@@ -72,8 +76,24 @@ test("rejects uppercase slug characters", () => {
   assert.throws(() => post("2026/08/02/Arc-Raiders.md"), /lowercase-kebab-case/);
 });
 
-test("rejects underscores in a slug", () => {
-  assert.throws(() => post("2026/08/02/arc_raiders.md"), /lowercase-kebab-case/);
+test("parses a variant postfix and retains a distinct route", () => {
+  const result = post("2026/08/02/arc-raiders_hu.md", "ARC Raiders magyarul");
+  assert.equal(result.slug, "arc-raiders_hu");
+  assert.equal(result.baseSlug, "arc-raiders");
+  assert.equal(result.variant, "hu");
+  assert.equal(result.canonicalId, "2026/08/02/arc-raiders");
+  assert.equal(result.route, "/2026/08/02/arc-raiders_hu");
+});
+
+test("accepts arbitrary lowercase variant postfixes", () => {
+  assert.equal(post("2026/08/02/post_pt-br.md").variant, "pt-br");
+  assert.equal(post("2026/08/02/post_v2.md").variant, "v2");
+});
+
+test("rejects malformed variant postfixes", () => {
+  assert.throws(() => post("2026/08/02/arc-raiders_.md"), /optional variant postfix/);
+  assert.throws(() => post("2026/08/02/arc-raiders_hu_extra.md"), /optional variant postfix/);
+  assert.throws(() => post("2026/08/02/arc-raiders_HU.md"), /optional variant postfix/);
 });
 
 test("rejects incorrect post directory depth", () => {
@@ -132,6 +152,25 @@ test("sorts same-day posts deterministically by slug", () => {
   assert.deepEqual(sorted.map(({ slug }) => slug), ["alpha", "zebra"]);
 });
 
+test("groups sorted variants under one canonical post", () => {
+  const groups = groupPosts([
+    post("2026/08/02/arc-raiders_nl.md"),
+    post("2026/08/02/another-post.md"),
+    post("2026/08/02/arc-raiders.md"),
+    post("2026/08/02/arc-raiders_hu.md"),
+  ]);
+
+  assert.deepEqual(groups.map((group) => group.canonical.slug), ["another-post", "arc-raiders"]);
+  assert.deepEqual(groups[1]!.variants.map((variant) => variant.variant), ["hu", "nl"]);
+});
+
+test("rejects a variant without its canonical post", () => {
+  assert.throws(
+    () => groupPosts([post("2026/08/02/arc-raiders_hu.md")]),
+    /requires canonical post 2026\/08\/02\/arc-raiders\.md/,
+  );
+});
+
 test("derives chronological neighbors for newest, middle, and oldest posts", () => {
   const posts = sortPosts([
     post("2023/03/04/oldest.md"),
@@ -170,6 +209,19 @@ test("uses deterministic same-day ordering for chronological neighbors", () => {
   assert.equal(getPostNeighbors(posts, posts[1]!.id).next?.slug, "alpha");
 });
 
+test("derives variant-page chronology from canonical posts only", () => {
+  const variant = post("2026/08/02/newest_hu.md");
+  const groups = groupPosts([
+    post("2025/06/01/older.md"),
+    post("2026/08/02/newest.md"),
+    variant,
+  ]);
+  const canonicalPosts = groups.map((group) => group.canonical);
+
+  assert.equal(getPostNeighbors(canonicalPosts, variant.canonicalId).previous?.slug, "older");
+  assert.equal(getPostNeighbors(canonicalPosts, variant.canonicalId).next, null);
+});
+
 test("rejects neighbor lookup for a post outside the collected list", () => {
   assert.throws(() => getPostNeighbors([], "2026/08/02/missing"), /not in the collected post list/);
 });
@@ -181,6 +233,18 @@ test("formats README source links and escapes link labels", () => {
   assert.equal(
     list,
     "- `2026-08-02` [A \\[test\\] \\\\ title](./2026/08/02/arc-raiders.md)",
+  );
+});
+
+test("formats one README entry with separately linked variants", () => {
+  const list = formatReadmePostList([
+    post("2026/08/02/arc-raiders_nl.md", "Nederlands"),
+    post("2026/08/02/arc-raiders.md", "English title"),
+    post("2026/08/02/arc-raiders_hu.md", "Magyar cím"),
+  ]);
+  assert.equal(
+    list,
+    "- `2026-08-02` [English title](./2026/08/02/arc-raiders.md) \\[[HU](./2026/08/02/arc-raiders_hu.md), [NL](./2026/08/02/arc-raiders_nl.md)\\]",
   );
 });
 
@@ -241,6 +305,35 @@ test("collectPosts reports every invalid Markdown path below year directories", 
         return true;
       },
     );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("collectPosts discovers canonical and variant files", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "blog-posts-"));
+  try {
+    const directory = path.join(root, "2026", "08", "02");
+    await mkdir(directory, { recursive: true });
+    await writeFile(path.join(directory, "arc-raiders.md"), "# English title\n");
+    await writeFile(path.join(directory, "arc-raiders_hu.md"), "# Magyar cím\n");
+
+    const posts = await collectPosts(root);
+    assert.deepEqual(posts.map((item) => item.slug), ["arc-raiders", "arc-raiders_hu"]);
+    assert.equal(groupPosts(posts)[0]!.variants[0]!.variant, "hu");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("collectPosts rejects an orphaned variant file", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "blog-posts-"));
+  try {
+    const directory = path.join(root, "2026", "08", "02");
+    await mkdir(directory, { recursive: true });
+    await writeFile(path.join(directory, "arc-raiders_hu.md"), "# Magyar cím\n");
+
+    await assert.rejects(collectPosts(root), /requires canonical post/);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

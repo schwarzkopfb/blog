@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { readBio } from "../src/lib/bio";
-import { collectPosts } from "../src/lib/posts";
+import { collectPosts, groupPosts } from "../src/lib/posts";
 import { generateReadme } from "../src/lib/readme";
 
 const root = process.cwd();
@@ -19,7 +19,7 @@ try {
     console.log("README.md is current.");
   } else {
     await writeFile(readmePath, nextReadme, "utf8");
-    console.log(`Updated README.md with ${posts.length} posts.`);
+    console.log(`Updated README.md with ${groupPosts(posts).length} posts.`);
   }
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);
