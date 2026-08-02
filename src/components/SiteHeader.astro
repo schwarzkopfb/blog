@@ -1,0 +1,14 @@
+---
+type Props = {
+  home?: boolean;
+  showAllPosts?: boolean;
+};
+
+const { home = false, showAllPosts = false } = Astro.props;
+const BrandTag = home ? "h1" : "div";
+---
+
+<header class="site-header">
+  <BrandTag class="brand"><a href="/">schwarzkopfb/blog</a></BrandTag>
+  {showAllPosts && <nav aria-label="Post navigation"><a href="/">All posts</a></nav>}
+</header>

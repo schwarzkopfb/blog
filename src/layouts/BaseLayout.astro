@@ -1,0 +1,304 @@
+---
+import SiteHeader from "../components/SiteHeader.astro";
+
+type Props = {
+  title: string;
+  home?: boolean;
+  showAllPosts?: boolean;
+};
+
+const { title, home = false, showAllPosts = false } = Astro.props;
+const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefined;
+const currentYear = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{title}</title>
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+  </head>
+  <body>
+    <div class="page-shell">
+      <SiteHeader home={home} showAllPosts={showAllPosts} />
+      <main>
+        <slot />
+      </main>
+      <footer class="site-footer">
+        <a href="mailto:abc@schwarzkopfb.xyz">Balázs Schwarzkopf</a> © {currentYear}
+      </footer>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: light dark;
+    --background: #f7f5f0;
+    --text: #232321;
+    --muted: #6c6b66;
+    --line: #d8d4ca;
+    --accent: #225c8a;
+    --code-background: #ebe8e0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-synthesis: none;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--background);
+  }
+
+  body {
+    margin: 0;
+    color: var(--text);
+    background: var(--background);
+    font-size: 1rem;
+    line-height: 1.7;
+    overflow-wrap: break-word;
+  }
+
+  .page-shell {
+    width: min(100% - 2.5rem, 46rem);
+    margin-inline: auto;
+  }
+
+  .site-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 2rem 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-header .brand {
+    margin: 0;
+    font: 650 1rem/1.2 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    letter-spacing: -0.015em;
+  }
+
+  .site-header a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .site-header nav a {
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration-thickness: 0.075em;
+    text-underline-offset: 0.16em;
+  }
+
+  a:hover {
+    text-decoration-thickness: 0.12em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 1px;
+  }
+
+  main {
+    padding-block: clamp(2.75rem, 7vw, 5rem) 5rem;
+  }
+
+  .site-footer {
+    padding-bottom: clamp(10rem, 24vh, 16rem);
+    color: var(--muted);
+    font: 500 0.68rem/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: 0.1em;
+    opacity: 0.28;
+    transition: opacity 160ms ease;
+  }
+
+  .site-footer:hover,
+  .site-footer:focus-within {
+    opacity: 0.72;
+  }
+
+  .site-footer a {
+    color: inherit;
+    text-decoration-color: transparent;
+  }
+
+  .site-footer a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .post-path {
+    margin: 0 0 1.1rem;
+    color: var(--muted);
+    font: 500 0.72rem/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  article {
+    font-size: 1.0625rem;
+  }
+
+  article h1 {
+    max-width: 18ch;
+    margin: 0 0 2.4rem;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+    font-size: clamp(2.45rem, 8vw, 4.25rem);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  article h2,
+  article h3,
+  article h4,
+  article h5,
+  article h6 {
+    margin-block: 2.6em 0.75em;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+
+  article h2 { font-size: 1.6rem; }
+  article h3 { font-size: 1.3rem; }
+  article p,
+  article ul,
+  article ol,
+  article blockquote,
+  article pre,
+  article table,
+  article img,
+  article iframe {
+    margin-block: 1.35em;
+  }
+
+  article ul,
+  article ol {
+    padding-left: 1.4em;
+  }
+
+  article li + li {
+    margin-top: 0.35em;
+  }
+
+  article blockquote {
+    margin-inline: 0;
+    padding-left: 1.25rem;
+    border-left: 2px solid var(--line);
+    color: var(--muted);
+  }
+
+  article code {
+    padding: 0.14em 0.32em;
+    background: var(--code-background);
+    font: 0.88em/1.4 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  article pre {
+    max-width: 100%;
+    padding: 1.1rem 1.25rem;
+    overflow-x: auto;
+    background: var(--code-background);
+    line-height: 1.55;
+  }
+
+  article pre code {
+    padding: 0;
+    background: none;
+  }
+
+  article hr {
+    margin-block: 3rem;
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  article table {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    border-collapse: collapse;
+    overflow-x: auto;
+    font-size: 0.94rem;
+  }
+
+  article th,
+  article td {
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--line);
+    text-align: left;
+  }
+
+  article img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  article figcaption {
+    margin-top: -0.9rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  article iframe[src*="youtube.com/embed/"],
+  article iframe[src*="youtube-nocookie.com/embed/"] {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border: 0;
+  }
+
+  strong { font-weight: 650; }
+
+  @media (max-width: 34rem) {
+    .page-shell {
+      width: min(100% - 2rem, 46rem);
+    }
+
+    .site-header {
+      padding-top: 1.4rem;
+    }
+
+    main {
+      padding-top: 2.5rem;
+    }
+
+    article h1 {
+      font-size: clamp(2.25rem, 12vw, 3.2rem);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #191a1b;
+      --text: #e8e6df;
+      --muted: #aaa8a1;
+      --line: #3b3b38;
+      --accent: #8bb9dc;
+      --code-background: #262729;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+</style>

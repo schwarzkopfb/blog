@@ -1,0 +1,29 @@
+{
+  "name": "schwarzkopfb-blog",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "preview": "astro preview",
+    "generate:readme": "tsx scripts/generate-readme.ts",
+    "validate:bio": "tsx scripts/validate-bio.ts",
+    "validate:posts": "tsx scripts/validate-posts.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "check:astro": "astro check",
+    "check": "npm run validate:bio && npm run validate:posts && npm run check:astro && npm test",
+    "build:site": "astro build",
+    "build": "npm run generate:readme && npm run check && npm run build:site"
+  },
+  "dependencies": {
+    "astro": "^7.1.6"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.23.1",
+    "typescript": "^5.9.3"
+  }
+}
