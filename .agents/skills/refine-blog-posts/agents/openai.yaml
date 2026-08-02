@@ -1,0 +1,4 @@
+interface:
+  display_name: "Refine Blog Posts"
+  short_description: "Make blog prose tighter and more dramatic"
+  default_prompt: "Use $refine-blog-posts to tighten this post while preserving its voice and narrative arc."
